@@ -12,6 +12,9 @@ import os
 DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'yield_df.csv')
 MODELS_DIR = os.path.join(os.path.dirname(__file__), '..', 'models')
 
+FEATURE_COLUMNS = ['Area', 'Item', 'Year', 'average_rain_fall_mm_per_year',
+                   'pesticides_tonnes', 'avg_temp']
+
 
 def load_data(path: Optional[str] = None) -> pd.DataFrame:
     """Load the raw crop yield dataset and drop index helper columns if present."""
@@ -44,9 +47,7 @@ def encode_and_split(
 
     encoders = {'Area': le_area, 'Item': le_item}
 
-    features = ['Area', 'Item', 'Year', 'average_rain_fall_mm_per_year',
-                'pesticides_tonnes', 'avg_temp']
-    X = df[features]
+    X = df[FEATURE_COLUMNS]
     y = df['hg/ha_yield']
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -55,19 +56,19 @@ def encode_and_split(
 
     scaler = StandardScaler()
     X_train_scaled = pd.DataFrame(
-        scaler.fit_transform(X_train), columns=features, index=X_train.index
+        scaler.fit_transform(X_train), columns=FEATURE_COLUMNS, index=X_train.index
     )
     X_test_scaled = pd.DataFrame(
-        scaler.transform(X_test), columns=features, index=X_test.index
+        scaler.transform(X_test), columns=FEATURE_COLUMNS, index=X_test.index
     )
 
     # Persist encoders, scaler, and feature metadata for downstream components.
     os.makedirs(MODELS_DIR, exist_ok=True)
     joblib.dump(encoders, os.path.join(MODELS_DIR, 'encoders.pkl'))
     joblib.dump(scaler, os.path.join(MODELS_DIR, 'scaler.pkl'))
-    joblib.dump(features, os.path.join(MODELS_DIR, 'feature_names.pkl'))
+    joblib.dump(FEATURE_COLUMNS, os.path.join(MODELS_DIR, 'feature_names.pkl'))
 
-    return X_train_scaled, X_test_scaled, y_train, y_test, encoders, scaler, features
+    return X_train_scaled, X_test_scaled, y_train, y_test, encoders, scaler, FEATURE_COLUMNS
 
 
 if __name__ == '__main__':
