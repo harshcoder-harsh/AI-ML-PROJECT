@@ -12,7 +12,7 @@ MODELS_DIR = os.path.join(os.path.dirname(__file__), '..', 'models')
 
 
 def load_data(path=None):
-    """Load the raw crop yield dataset into a pandas DataFrame."""
+    """Load the raw crop yield dataset and drop index helper columns if present."""
     if path is None:
         path = DATA_PATH
     df = pd.read_csv(path)
