@@ -31,6 +31,7 @@ def preprocess(df):
 
 
 def encode_and_split(df, test_size=0.2):
+    """Encode categorical features, scale inputs, and create train/test splits."""
     le_area = LabelEncoder()
     le_item = LabelEncoder()
     df['Area'] = le_area.fit_transform(df['Area'])
