@@ -1,5 +1,7 @@
 """Data preprocessing utilities for the crop yield prediction models."""
 
+from typing import Dict, Optional, Tuple
+
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -11,7 +13,7 @@ DATA_PATH = os.path.join(os.path.dirname(__file__), '..', 'data', 'yield_df.csv'
 MODELS_DIR = os.path.join(os.path.dirname(__file__), '..', 'models')
 
 
-def load_data(path=None):
+def load_data(path: Optional[str] = None) -> pd.DataFrame:
     """Load the raw crop yield dataset and drop index helper columns if present."""
     if path is None:
         path = DATA_PATH
@@ -21,7 +23,7 @@ def load_data(path=None):
     return df
 
 
-def preprocess(df):
+def preprocess(df: pd.DataFrame) -> pd.DataFrame:
     """Clean the dataset and remove extreme yield outliers."""
     df = df.dropna()
     # Trim the target distribution to reduce the influence of extreme values.
@@ -31,7 +33,9 @@ def preprocess(df):
     return df.reset_index(drop=True)
 
 
-def encode_and_split(df, test_size=0.2):
+def encode_and_split(
+    df: pd.DataFrame, test_size: float = 0.2
+) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series, Dict[str, LabelEncoder], StandardScaler, list]:
     """Encode categorical features, scale inputs, and create train/test splits."""
     le_area = LabelEncoder()
     le_item = LabelEncoder()
